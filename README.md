@@ -1,0 +1,2 @@
+# lo
+Minimalist web blog
