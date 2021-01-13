@@ -1,0 +1,25 @@
+<nav class="w-full flex items-center justify-center {{ bg }} {{ border }}">
+  <div class="w-full px-8 lg:px-0 md:px-0 lg:w-5/6 md:w-5/6 py-8 flex justify-between items-center">
+    {{#if logo}}
+      {{> logo}}
+    {{else}}
+      {{> author name=name}}
+    {{/if}}
+    <div class="options flex items-center justify-around">
+      <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 cursor-pointer hover:text-gray-500 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 cursor-pointer hover:text-gray-500 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      {{#if logged_in}}
+          <img id="user-icon" src="{{ user.avatar }}" class="w-8 h-8 mx-2 cursor-pointer rounded-full object-cover" />
+          {{> usercard}}
+      {{else}}
+        <svg id="login-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 cursor-pointer hover:text-gray-500 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      {{/if}}
+    </div>
+  </div>
+</nav>

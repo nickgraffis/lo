@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: greek;
+  src: url('./fonts/Ravenia.ttf');
+}

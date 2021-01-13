@@ -1,0 +1,18 @@
+{{> nav bg='bg-blueGray-100' logo=true name=false border=false}}
+{{> hero }}
+<div class="w-full flex justify-center">
+  <div class="lg:w-4/6 md:w-full sm:w-full px-8 md:px-8 lg:px-0">
+    <div class="grid grid-cols-12 gap-12">
+      <div class="col-span-12 lg:col-span-8 md:col-span-12">
+        {{#if posts}}
+          {{#each posts }}
+            {{> postcard }}
+          {{/each}}
+        {{/if}}
+      </div>
+      <div class="lg:col-span-4 md:col-span-12 md:px-8 col-span-12 md:col-span-12">
+        {{> sidebar }}
+      </div>
+    </div>
+  </div>
+</div>
