@@ -52,6 +52,11 @@ window.signout = async () => {
   window.location.href = '/'
 }
 
+window.newStory = (id) => {
+  lo.create('post', {user_id: id, status: 0})
+  .then(post => window.location.href = `/write/${JSON.parse(post).id}`)
+}
+
 let clappedPosts = []
 let clappedPostsIds = []
 

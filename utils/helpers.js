@@ -20,7 +20,8 @@ module.exports = {
       return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear().toString().substring(2)
     }
   },
-  readTime: (string) => {
+  readTime: (post) => {
+    const string = post.split('')
     const length = string.length
     const words = length / 6.7
     const min = words / 200

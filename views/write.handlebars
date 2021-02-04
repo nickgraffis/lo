@@ -1,0 +1,19 @@
+{{#if post.status}}
+  {{> nav bg=bg-white logo=false name=user.name border='border-b border-gray-300'
+ action='<div onclick="unpublish()" class="mx-4 text-white p-2 bg-lime-600 rounded-sm cursor-pointer">Unpublish</div>'}}
+{{else}}
+  {{> nav bg=bg-white logo=false name=user.name border='border-b border-gray-300'
+action='<div onclick="publish()" class="mx-4 text-white p-2 bg-lime-600 rounded-sm cursor-pointer">Publish</div>'}}
+{{/if}}
+<div class="w-full flex justify-center mt-12">
+  <div class="w-full md:w-8/12 lg:w-6/12 lg:px-0 md:px-0 px-8">
+    <div id="editorjs"></div>
+  </div>
+</div>
+{{#section 'script'}}
+<script>
+  const postData = {{{editorPost}}}
+  const postReadOnly = false
+</script>
+<script src="/js/editor.bundle.js"></script>
+{{/section}}

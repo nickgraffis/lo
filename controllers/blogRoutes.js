@@ -5,12 +5,17 @@ const withAuth = require('../utils/auth');
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
+      where: { status: 1 },
       include: [
         {
           model: User,
           attributes: ['name', 'id', 'email', 'avatar']
         }
-      ]
+      ],
+      order: [
+         // Will escape title and validate DESC against a list of valid direction parameters
+         ['created_at', 'DESC'],
+       ]
     });
 
     const tagData = await Tag.findAll({ limit: 10 });
@@ -49,8 +54,10 @@ router.get('/post/:id', async (req, res) => {
     const tags = tagsData.map((tag) => tag.get({ plain: true }));
     const remarks = remarkData.map((remark) => remark.get({ plain: true }));
     console.log(post)
+    let editorPost = JSON.stringify(post)
     res.render('post', {
       post,
+      editorPost,
       user,
       tags,
       remarks,
@@ -75,6 +82,34 @@ router.get('/profile', withAuth, async (req, res) => {
 
     res.render('profile', {
       user,
+      logged_in: true
+    });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err);
+  }
+});
+
+router.get('/write/:id', withAuth, async (req, res) => {
+  try {
+    const userData = await User.findOne({
+      where: { id: req.session.user_id }
+    }, {
+      attributes: { exclude: ['password'] },
+    });
+    const postData = await Post.findOne({ where: { id: req.params.id } });
+    let post = postData.get({ plain: true });
+    const user = userData.get({ plain: true });
+    if (post.user_id != user.id) {
+      console.log('This is not your article')
+      res.status(500).json(err);
+    }
+    console.log(post)
+    let editorPost = JSON.stringify(post)
+    res.render('write', {
+      user,
+      editorPost,
+      post,
       logged_in: true
     });
   } catch (err) {

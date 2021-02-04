@@ -5,7 +5,7 @@ function lojax(method, route, params) {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
         resolve(xhttp.responseText);
       } else if (xhttp.readyState == 4 && xhttp.status != 200) {
-        resolve(xhttp.status);
+        reject(xhttp.status);
       }
     };
     xhttp.open(method, route, true);
@@ -18,11 +18,7 @@ module.exports = {
   create: function (model, params) {
     const method = 'POST';
     const route = '/api/' + model + 's';
-    return new Promise((resolve, reject) => {
-      lojax(method, route, params)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
+    return lojax(method, route, params)
   },
   read: function (model, params) {
     const method = 'GET';
@@ -32,11 +28,7 @@ module.exports = {
     } else if (params.email && model === 'user') {
       route = '/api/' + model + 's/' + params.email;
     }
-    return new Promise((resolve, reject) => {
-      lojax(method, route, params)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
+    return lojax(method, route, params)
   },
   update: function (model, params) {
     const method = 'PUT';
@@ -46,11 +38,7 @@ module.exports = {
     } else {
       return 'Update requires an id!';
     }
-    return new Promise((resolve, reject) => {
-      lojax(method, route, params)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
+    return lojax(method, route, params)
   },
   delete: function (model, params) {
     const method = 'DELETE';
@@ -60,28 +48,16 @@ module.exports = {
     } else {
       return 'Delete requires an id!';
     }
-    return new Promise((resolve, reject) => {
-      lojax(method, route, params)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
+    return lojax(method, route, params)
   },
   logout: function () {
     const method = 'POST';
     const route = '/api/users/logout';
-    return new Promise((resolve, reject) => {
-      lojax(method, route)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
+    return lojax(method, route)
   },
   login: function (email, password) {
     const method = 'POST';
     const route = '/api/users/login';
-    return new Promise((resolve, reject) => {
-      lojax(method, route, { email, password })
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
+    return lojax(method, route, { email, password })
   },
 };
