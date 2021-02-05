@@ -44,6 +44,7 @@ if (document.querySelector('#login-icon')) {
   })
 }
 
+
 window.updateProfile = async (id, field, value, callback) => {
   let userData = await lo.update('user', {id, [field]: value})
   let user = JSON.parse(userData)
