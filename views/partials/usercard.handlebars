@@ -1,4 +1,4 @@
-<div id="user-card" class="user-card-bits hidden absolute flex rounded-sm tooltip-text bg-white mt-52 lg:mt-56 md:mt-56 z-50 -ml-8 lg:ml-4 md:-ml-2 shadow-lg lg:w-64 md:w-58 w-48 rounded">
+<div id="user-card" class="user-card-bits hidden absolute flex rounded-sm tooltip-text bg-white mt-52 lg:mt-56 md:mt-56 z-50 -ml-8 lg:ml-0 md:-ml-2 shadow-lg lg:w-64 md:w-58 w-48 rounded">
   <div class="user-card-bits w-full">
     <div class="user-card-bits flex items-center px-4 py-6 border-b border-gray-200 w-full">
       <img src="{{ user.avatar }}" class="user-card-bits mr-4 w-12 h-12 mx-2 cursor-pointer rounded-full object-cover" />
@@ -9,11 +9,10 @@
     </div>
     <ul class="user-card-bits list-none p-4">
       <li onclick="newStory({{ user.id }})" class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Write a Story</li>
-      <li class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Stories</li>
-      <li class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Profile</li>
-      <li class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Settings</li>
+      <a href="/stories"><li class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Stories</li></a>
+      <a href="/profile"><li class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Profile</li></a>
       <li class="user-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Help</li>
-      <li onclick="signout()" class="user-card-bits text-sm text-lime-500 my-4 cursor-pointer hover:text-lime-600 transform duration-150 hover:translate-x-1">Sign Out</li>
+      <li onclick="signout()" class="user-card-bits text-sm text-cyan-500 my-4 cursor-pointer hover:text-cyan-600 transform duration-150 hover:translate-x-1">Sign Out</li>
     </ul>
   </div>
 </div>

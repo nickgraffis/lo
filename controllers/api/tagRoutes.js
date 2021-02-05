@@ -19,9 +19,13 @@ router.post('/', async (req, res) => {
       res.json({ message: 'Could not find that post!' });
     }
 
-    const tagData = await Tag.create(req.body, {
+    const tagData = await Tag.create({
+      tag: req.body.tag
+    }, {
       attributes: ['id', 'tag']
     });
+
+    postData.addTag(tagData)
 
     res.json(tagData);
   } catch (err) {

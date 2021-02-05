@@ -10,6 +10,7 @@ module.exports = {
   variants: {
     extend: {
       translate: ['group-hover'],
+      visibility: ['group-hover', 'hover', 'focus'],
     },
   },
   plugins: [],

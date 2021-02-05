@@ -12,12 +12,33 @@ const Marker = require('@editorjs/marker');
 const CodeTool = require('@editorjs/code');
 const Warning = require('@editorjs/warning');
 const InlineCode = require('@editorjs/inline-code');
-const SimpleImage = require('@editorjs/simple-image');
 const lo = require('./api/lojax.js')
 
-window.publish = async () => {
+window.publish = () => {
   lo.update('post', {id: postData.id, status: 1})
+  .then(document.querySelector('.pub').outerHTML = '<div onclick="unpublish()" class="pub mx-4 text-white p-2 bg-cyan-600 rounded-sm cursor-pointer">Unpublish</div>')
 }
+window.unpublish = () => {
+  lo.update('post', {id: postData.id, status: 0})
+  .then(document.querySelector('.pub').outerHTML = '<div onclick="publish()" class="pub mx-4 text-white p-2 bg-cyan-600 rounded-sm cursor-pointer">Publish</div>')
+}
+
+window.addEventListener("keydown", (event) => {
+  if (event.key == 'Enter'
+  && document.activeElement === document.querySelector('#addTag')
+  && document.querySelector('#addTag').value) {
+    lo.create('tag', {tag: document.querySelector('#addTag').value, post_id, user_id})
+    .then((response) => {
+      let res = JSON.parse(response)
+      let tag = document.createElement('DIV')
+      console.log(res)
+      tag.classList = 'rounded-sm bg-gray-100 text-sm text-gray-500 p-2 m-1 cursor-pointer'
+      tag.innerHTML = `${res.tag[0].toUpperCase() + res.tag.substring(1)}`
+      document.querySelector('#tagswrapper').prepend(tag)
+      document.querySelector('#addTag').value = ''
+    })
+  }
+})
 
 class MyHeader extends Header {
     /**
@@ -60,8 +81,13 @@ var editor = new EditorJS({
        * Or pass class directly without any configuration
        */
       image: {
-        class: SimpleImage,
-        inlineToolbar: ['link'],
+        class: Image,
+        config: {
+          endpoints: {
+            byFile: `http://localhost:3030/imageupload`, // Your backend file uploader endpoint
+            byUrl: 'http://localhost:3030/fetchUrl', // Your endpoint that provides uploading by Url
+          }
+        }
       },
       list: {
         class: List,

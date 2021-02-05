@@ -1,17 +1,27 @@
 {{#if post.status}}
   {{> nav bg=bg-white logo=false name=user.name border='border-b border-gray-300'
- action='<div onclick="unpublish()" class="mx-4 text-white p-2 bg-lime-600 rounded-sm cursor-pointer">Unpublish</div>'}}
+  options=1
+ action='<div onclick="unpublish()" class="pub mx-4 text-white p-2 bg-cyan-600 rounded-sm cursor-pointer">Unpublish</div>'}}
 {{else}}
   {{> nav bg=bg-white logo=false name=user.name border='border-b border-gray-300'
-action='<div onclick="publish()" class="mx-4 text-white p-2 bg-lime-600 rounded-sm cursor-pointer">Publish</div>'}}
+options=1
+action='<div onclick="publish()" class="pub mx-4 text-white p-2 bg-cyan-600 rounded-sm cursor-pointer">Publish</div>'}}
 {{/if}}
 <div class="w-full flex justify-center mt-12">
   <div class="w-full md:w-8/12 lg:w-6/12 lg:px-0 md:px-0 px-8">
     <div id="editorjs"></div>
+    <div id="tagswrapper" class="flex items-center flex-wrap pt-6 pb-24">
+      {{#each tags}}
+        <div class="rounded-sm bg-gray-100 text-sm text-gray-500 p-2 m-1 cursor-pointer">{{capitolize tag }}</div>
+      {{/each}}
+      <input id="addTag" class="mx-4 apperance-none focus:outline-none" placeholder="Add tag..." />
+    </div>
   </div>
 </div>
 {{#section 'script'}}
 <script>
+  const post_id = {{post.id}}
+  const user_id = {{user.id}}
   const postData = {{{editorPost}}}
   const postReadOnly = false
 </script>

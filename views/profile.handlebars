@@ -1,9 +1,7 @@
 {{> nav bg='bg-blueGray-100' logo=true name=false border=false}}
 <div class="w-full flex justify-center">
-  <div class="lg:w-4/6 md:w-full sm:w-full px-8 md:px-8 lg:px-0">
+  <div class="lg:w-4/6 md:w-full w-full px-8 md:px-8 lg:px-0">
     <div class="grid grid-cols-12">
-      <div class="col-span-4">
-      </div>
       <div class="col-span-8">
         <p class="text-gray-800 font-semibold text-xl py-6 border-b border-gray-200">
           Profile
@@ -13,12 +11,45 @@
             <p class="text-gray-800 font-semibold text-lg pt-6">
               Name
             </p>
-            <p class="text-gray-400 text-md py-2">
+            <p id="nameDisplay" class="text-gray-400 text-md py-2">
               {{ user.name }}
             </p>
+            <input class="apperance-none focus:outline-none hidden text-gray-800 text-md py-2" value="{{user.name}}" id="nameInput" />
           </div>
           <div class="col-span-4 place-self-end self-start py-6">
-            <div class="border-gray-200 border-2 py-2 px-3 text-gray-400 rounded-md cursor-pointer">
+            <div onclick="editField('name')" class="py-2 px-3 text-white rounded-md cursor-pointer bg-cyan-600 hover:bg-cyan-700">
+              Edit
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-12">
+          <div class="col-span-8 border-b border-gray-200">
+            <p class="text-gray-800 font-semibold text-lg pt-6">
+              Email
+            </p>
+            <p id="emailDisplay" class="text-gray-400 text-md py-2">
+              {{ user.email }}
+            </p>
+            <input class="apperance-none focus:outline-none hidden text-gray-800 text-md py-2" value="{{user.email}}" id="emailInput" />
+          </div>
+          <div class="col-span-4 place-self-end self-start py-6">
+            <div onclick="editField('email')" class="py-2 px-3 text-white rounded-md cursor-pointer bg-cyan-600 hover:bg-cyan-700">
+              Edit
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-12">
+          <div class="col-span-8 border-b border-gray-200">
+            <p class="text-gray-800 font-semibold text-lg pt-6">
+              Password
+            </p>
+            <p id="passwordDisplay" class="text-gray-400 text-md py-2">
+              &middot;&middot;&middot;&middot;&middot;&middot;&middot;&middot;&middot;&middot;
+            </p>
+            <input class="apperance-none focus:outline-none hidden text-gray-800 text-md py-2" value="&middot;&middot;&middot;&middot;&middot;&middot;&middot;&middot;&middot;&middot;" id="passwordInput" />
+          </div>
+          <div class="col-span-4 place-self-end self-start py-6">
+            <div onclick="editField('password')" class="py-2 px-3 text-white rounded-md cursor-pointer bg-cyan-600 hover:bg-cyan-700">
               Edit
             </div>
           </div>
@@ -27,3 +58,27 @@
     </div>
   </div>
 </div>
+
+{{#section 'script'}}
+<script>
+  let identifiers = {
+    name: false,
+    email: false,
+    password: false
+  }
+  const editField = (field) => {
+    if (identifiers[field]) {
+      document.querySelector(`#${field}Display`).classList.remove('hidden')
+      document.querySelector(`#${field}Input`).classList.add('hidden')
+      event.target.innerHTML = 'Edit'
+      event.target.onclick = () => editField('password')
+    } else {
+      document.querySelector(`#${field}Display`).classList.add('hidden')
+      document.querySelector(`#${field}Input`).classList.remove('hidden')
+      event.target.innerHTML = 'Save'
+      event.target.onclick = () => updateProfile('{{user.id}}', field, document.querySelector(`#${field}Input`).value, editField(`${field}`))
+    }
+    identifiers[field] = !identifiers[field]
+  }
+</script>
+{{/section}}

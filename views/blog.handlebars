@@ -16,3 +16,51 @@
     </div>
   </div>
 </div>
+{{#section 'script'}}
+<script>
+  const filterTag = (tag, target) => {
+    target.classList.add('bg-gray-600')
+    target.classList.replace('text-gray-400', 'text-white')
+    document.querySelectorAll('.card').forEach((card) => {
+      let tags = JSON.parse(card.getAttribute('data-tags'))
+      let safe
+      tags.forEach((t) => {
+        if (t == tag) {
+          safe = true
+        }
+      })
+      if (!safe) {
+        let disqualifiers = JSON.parse(card.getAttribute('data-disqualifier'))
+        disqualifiers.push(tag)
+        card.setAttribute('data-disqualifier', JSON.stringify(disqualifiers))
+        card.classList.add('hidden')
+      }
+    })
+  }
+
+  const unfilterTag = (tag, target) => {
+    target.classList.remove('bg-gray-600')
+    target.classList.replace('text-white', 'text-gray-400')
+    document.querySelectorAll('.card').forEach((card) => {
+      let disqualifiers = JSON.parse(card.getAttribute('data-disqualifier'))
+      disqualifiers.forEach((d, i) => {
+        if (d == tag) {
+          disqualifiers.splice(i, 1)
+        }
+      })
+      card.setAttribute('data-disqualifier', JSON.stringify(disqualifiers))
+      if (disqualifiers.length == 0) {
+        card.classList.remove('hidden')
+      }
+    })
+  }
+
+  const filterByTag = async (tag, event) => {
+    if (event.target.classList.contains('bg-gray-600')) {
+      unfilterTag (tag, event.target)
+    } else {
+      filterTag (tag, event.target)
+    }
+  }
+</script>
+{{/section}}

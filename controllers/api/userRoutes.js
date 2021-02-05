@@ -37,6 +37,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  try {
+    let userData = await User.findOne({ where: { id: req.params.id } })
+    console.log(userData)
+    userData = await userData.update({
+      name: req.body.name || userData.dataValues.name,
+      email: req.body.email || userData.dataValues.email,
+      password: req.body.password || userData.dataValues.password,
+      avatar: req.body.avatar || userData.dataValues.avatar
+    });
+    console.log(userData)
+    res.json(userData);
+  } catch (err) {
+    console.log(err)
+    res.status(400).json(err);
+  }
+});
+
+
 router.post('/login', async (req, res) => {
   try {
     const userData = await User.findOne({ where: { email: req.body.email } });

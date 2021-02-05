@@ -1,0 +1,66 @@
+{{> nav bg='bg-blueGray-100' logo=true name=false border=false}}
+<div class="w-full flex justify-center">
+  <div class="lg:w-4/6 md:w-full sm:w-full px-8 md:px-8 lg:px-0 py-4">
+    <div class="flex">
+      <div id="pubclick" onclick="changeView('published')" class="cursor-pointer mr-4 text-gray-400 text-gray-700 border-b border-gray-700 z-20">
+          Published {{published.length}}
+      </div>
+      <div id="draftclick" onclick="changeView('draft')" class="cursor-pointer mx-4 text-gray-400 z-20">
+          Drafts {{drafts.length}}
+      </div>
+      <div class="lg:w-4/6 md:w-full sm:w-full z-10 px-8 md:px-8 lg:px-0 mt-6 border-b bg-gray-400 absolute"></div>
+    </div>
+    {{#each published}}
+      <div class="py-3 pr-3 border-b border-gray-400 cursor-pointer nothidden published">
+        <a href="/write/{{dataValues.id}}">
+          <p class="text-gray-800 font-bold text-lg">{{dataValues.title}}</p>
+          <p class="text-gray-500 text-base">{{{dataValues.tagline}}}</p>
+          <div class="flex">
+            <p class="text-gray-500 text-xs pt-4">Last Edited {{simple dataValues.updatedAt }}</p>
+          </div>
+        </a>
+      </div>
+    {{/each}}
+    {{#each drafts}}
+      <div class="py-3 pr-3 border-b border-gray-400 cursor-pointer hidden draft">
+        <a href="/write/{{dataValues.id}}">
+          <p class="text-gray-800 font-bold text-lg">{{dataValues.title}}</p>
+          <p class="text-gray-500 text-base">{{{dataValues.tagline}}}</p>
+          <div class="flex">
+            <p class="text-gray-500 text-xs pt-4">Last Edited {{simple dataValues.updatedAt }}</p>
+          </div>
+        </a>
+      </div>
+    {{/each}}
+  </div>
+</div>
+{{#section 'script'}}
+  <script>
+  let currentView = 'published'
+  const changeView = (view) => {
+    if (currentView === 'published') {
+      if (view == 'published') {
+        console.log('aready there')
+        return
+      } else {
+        document.querySelectorAll('.draft').forEach((item) => item.classList.replace('hidden', 'nothidden'))
+        document.querySelector('#draftclick').classList.add('text-gray-700', 'border-b', 'border-gray-700')
+        document.querySelector('#pubclick').classList.remove('text-gray-700', 'border-b', 'border-gray-700')
+        document.querySelectorAll('.published').forEach((item) => item.classList.replace('nothidden', 'hidden'))
+        currentView = 'draft'
+      }
+    } else {
+      if (view == 'draft') {
+        console.log('aready there')
+        return
+      } else {
+        document.querySelectorAll('.published').forEach((item) => item.classList.replace('hidden', 'nothidden'))
+        document.querySelector('#pubclick').classList.add('text-gray-700', 'border-b', 'border-gray-700')
+        document.querySelector('#draftclick').classList.remove('text-gray-700', 'border-b', 'border-gray-700')
+        document.querySelectorAll('.draft').forEach((item) => item.classList.replace('nothidden', 'hidden'))
+        currentView = 'published'
+      }
+    }
+  }
+  </script>
+{{/section}}

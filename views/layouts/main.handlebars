@@ -33,6 +33,57 @@
   <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
   {{{_sections.styles}}}
   <style>
+  :root {
+  --base: 400px;
+  --sun: 75px;
+  --bird: 40px;
+  --uranus: 50px;
+  --rocket-color: #FFFFFF;
+  --detail-color: #DD4D2D;
+  --window-color: #076AA1;
+  --flame-outer-color: #F6AD14;
+  --flame-inner-color: #F2E718;
+}
+      .saturn-container {
+      position: relative;
+      width: var(--uranus);
+      height: var(--uranus);
+    }
+
+    .saturn {
+      position: absolute;
+      background: #97c4d3;
+      z-index: 3;
+      width: var(--uranus);
+      height: var(--uranus);
+      border-radius: var(--uranus);
+      overflow: hidden;
+    }
+
+    .saturn:after {
+      content: "";
+      position: absolute;
+      background: #aad7e6;
+      width: var(--uranus);
+      height: var(--uranus);
+      border-radius: var(--uranus);
+      left: calc(var(--uranus) * 0.07);
+      top: calc(var(--uranus) * -0.07);
+    }
+
+    .saturn-container .circle {
+      position: absolute;
+      z-index: 0;
+      top: calc(var(--uranus) * -0.14);
+      left: calc(var(--uranus) * -0.14);
+      width: calc(var(--uranus) * 1.29);
+      height: calc(var(--uranus) * 1.29);
+      border-radius: calc(var(--uranus) * 1.29);
+      background: transparent;
+      transform: rotateX(45deg) rotateY(45deg) rotateZ(90deg);
+      border: solid calc(var(--uranus) * 0.14) rgba(136,180,195,0.5);
+      -webkit-animation: saturn 3s infinite linear;
+    }
     .tooltip .tooltip-text {
       text-align: center;
       position: absolute;

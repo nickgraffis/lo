@@ -1,5 +1,7 @@
-<div class="card w-full flex py-4">
-  <div class="text w-4/6 pr-4">
+<div class="card w-full flex py-4"
+data-disqualifier='[]'
+data-tags='[{{#foreach tags}} "{{tag}}" {{#if $last}}{{else}},{{/if}} {{/foreach}}]'>
+  <div class="text {{#if img}}w-4/6 {{else}} w-full {{/if}} pr-4">
     <div class="author flex w-full items-center">
       <img src="{{ user.avatar }}" class="mr-2 h-8 w-8 rounded-full object-cover" />
       <p class="text-gray-500 text-sm font-semibold mx-2">{{ user.name }}</p>
@@ -7,7 +9,7 @@
     <a href="/post/{{ id }}">
       <p class="title text-gray-700 text-xl font-semibold my-2">{{ title }}</p>
       <p class="tagline text-gray-500 text-lg my-2">
-        {{ tagline }}
+        {{{ tagline }}}
       </p>
     </a>
     <div class="dateline flex my-2 justify-between items-center">
@@ -33,9 +35,11 @@
       </div>
     </div>
   </div>
+  {{#if img}}
   <div class="img w-2/6">
     <a href="/post/{{ id }}">
-      <img src="https://bit.ly/3qeTSEr" class="object-cover w-full h-full" />
+      <img src="{{img.file.url}}" class="object-cover w-full h-full" />
     </a>
   </div>
+  {{/if}}
 </div>

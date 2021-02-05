@@ -1,0 +1,15 @@
+<div id="options-card" class="options-card-bits hidden absolute flex rounded-sm tooltip-text bg-white mt-24 lg:mt-24 md:mt-24 z-50 -ml-24 lg:-ml-24 md:-ml-24 shadow-lg lg:w-64 md:w-58 w-48 rounded z-30">
+    <ul class="options-card-bits list-none p-4">
+      <li onclick="showTags()" class="options-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Add Tags</li>
+      <li class="options-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Delete Post</li>
+      <li class="options-card-bits text-sm text-gray-400 my-4 cursor-pointer hover:text-gray-500 transform duration-150 hover:translate-x-1">Help</li>
+    </ul>
+    <div id="tags" class="bg-white w-full h-full absolute hidden">
+      <div class="flex">
+        {{#each tags}}
+          <div class="border border-gray-400 p-2">tag</div>
+        {{/each}}
+        <input class="apperance-none" placeholder="Add tag..." />
+      </div>
+    </div>
+</div>

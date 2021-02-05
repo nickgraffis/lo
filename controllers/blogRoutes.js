@@ -10,19 +10,37 @@ router.get('/', async (req, res) => {
         {
           model: User,
           attributes: ['name', 'id', 'email', 'avatar']
+        },
+        {
+          model: Tag
         }
       ],
+
       order: [
          // Will escape title and validate DESC against a list of valid direction parameters
          ['created_at', 'DESC'],
        ]
     });
 
-    const tagData = await Tag.findAll({ limit: 10 });
+    const tagData = await Tag.findAll({ });
 
     const tags = tagData.map((tag) => tag.get({ plain: true }))
 
-    const posts = postData.map((post) => post.get({ plain: true }));
+    let posts = postData.map((post) => post.get({ plain: true }));
+
+    posts.forEach((post) => {
+      try {
+        let $post = JSON.parse(post.post)
+        if ($post.blocks) {
+          $post.blocks.map((block) => {
+            if (block.type === 'image') {
+              post.img = block.data
+            }
+          })
+        }
+      } catch (err) {
+      }
+    })
 
     let userData
     let user
@@ -53,7 +71,6 @@ router.get('/post/:id', async (req, res) => {
     const tagsData = await postData.getTags();
     const tags = tagsData.map((tag) => tag.get({ plain: true }));
     const remarks = remarkData.map((remark) => remark.get({ plain: true }));
-    console.log(post)
     let editorPost = JSON.stringify(post)
     res.render('post', {
       post,
@@ -90,6 +107,45 @@ router.get('/profile', withAuth, async (req, res) => {
   }
 });
 
+router.get('/stories', withAuth, async (req, res) => {
+  try {
+    const userData = await User.findOne({
+      where: { id: req.session.user_id }
+    }, {
+      attributes: { exclude: ['password'] }
+    });
+
+    const user = userData.get({ plain: true });
+
+    const posts = await userData.getPosts({
+      order: [
+        // Will escape title and validate DESC against a list of valid direction parameters
+        ['updated_at', 'DESC']
+      ]
+    })
+
+    let published = []
+    let drafts = []
+    posts.forEach((post) => {
+      if (post.dataValues.status) {
+        published.push(post)
+      } else {
+        drafts.push(post)
+      }
+    })
+
+    res.render('stories', {
+      user,
+      drafts,
+      published,
+      logged_in: true
+    });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err);
+  }
+});
+
 router.get('/write/:id', withAuth, async (req, res) => {
   try {
     const userData = await User.findOne({
@@ -106,10 +162,13 @@ router.get('/write/:id', withAuth, async (req, res) => {
     }
     console.log(post)
     let editorPost = JSON.stringify(post)
+    const tagData = await postData.getTags()
+    const tags = tagData.map(t => t.get({ plain: true }))
     res.render('write', {
       user,
       editorPost,
       post,
+      tags,
       logged_in: true
     });
   } catch (err) {
