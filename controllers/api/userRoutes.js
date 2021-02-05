@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      avatar: './images/avatars/default.png'
+      avatar: './img/avatars/default.png'
     });
 
     req.session.save(() => {
