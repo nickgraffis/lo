@@ -54,7 +54,7 @@ app.post('/imageupload/', upload.single('image'), async (req, res) => {
     let response = {
         "success" : 1,
         "file": {
-            "url" : 'http://localhost:3030/img/' + req.file.filename,
+            "url" : 'https://neptuneblog.herokuapp.com/img/' + req.file.filename,
         }
     }
     res.json(response);

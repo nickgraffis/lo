@@ -84,7 +84,7 @@ var editor = new EditorJS({
         class: Image,
         config: {
           endpoints: {
-            byFile: `http://localhost:3030/imageupload`, // Your backend file uploader endpoint
+            byFile: `https://neptuneblog.herokuapp.com/imageupload`, // Your backend file uploader endpoint
             byUrl: 'http://localhost:3030/fetchUrl', // Your endpoint that provides uploading by Url
           }
         }
