@@ -13,6 +13,7 @@ const CodeTool = require('@editorjs/code');
 const Warning = require('@editorjs/warning');
 const InlineCode = require('@editorjs/inline-code');
 const lo = require('./api/lojax.js')
+const __ = require('../../utils/helpers.js')
 
 window.publish = () => {
   lo.update('post', {id: postData.id, status: 1})
@@ -21,6 +22,11 @@ window.publish = () => {
 window.unpublish = () => {
   lo.update('post', {id: postData.id, status: 0})
   .then(document.querySelector('.pub').outerHTML = '<div onclick="publish()" class="pub mx-4 text-white p-2 bg-cyan-600 rounded-sm cursor-pointer">Publish</div>')
+}
+
+window.deletePost = () => {
+  lo.delete('post', {id: postData.id})
+  .then(window.location.href = '/stories')
 }
 
 window.addEventListener("keydown", (event) => {
@@ -37,8 +43,32 @@ window.addEventListener("keydown", (event) => {
       document.querySelector('#tagswrapper').prepend(tag)
       document.querySelector('#addTag').value = ''
     })
-  }
+  } else if (event.key == 'Enter'
+    && document.activeElement === document.querySelector('#remarkInput')
+    && document.querySelector('#remarkInput').value.length > 0) {
+      addRemark()
+    }
 })
+
+window.addRemark = () => {
+  if (document.querySelector('#remarkInput').value.length > 0) {
+    lo.create('remark', {user_id, post_id, comment: document.querySelector('#remarkInput').value})
+    .then((response) => {
+      let res = JSON.parse(response)
+      let remarks = document.querySelector('#remarks')
+      let remark = document.createElement('DIV')
+      remark.classList = 'p-4'
+      remark.innerHTML = `<div class="flex items-center">
+              <img src="${res.user.avatar}" class="rounded-full h-6 w-6 object-cover mr-2" />
+              <span class="text-sm text-gray-800 font-medium mx-2">${res.user.name}</span>
+              <span class="text-xs text-gray-600 mx-2">${__.simple(res.createdAt)}</span>
+            </div>
+            <p class="italic text-sm text-gray-600 pt-2">${res.comment}</p>`
+      remarks.prepend(remark)
+      document.querySelector('#remarkInput').value = ''
+    })
+  }
+}
 
 class MyHeader extends Header {
     /**
@@ -84,7 +114,7 @@ var editor = new EditorJS({
         class: Image,
         config: {
           endpoints: {
-            byFile: `https://neptuneblog.herokuapp.com/imageupload`, // Your backend file uploader endpoint
+            byFile: `http://localhost:3030/imageupload`, // Your backend file uploader endpoint
             byUrl: 'http://localhost:3030/fetchUrl', // Your endpoint that provides uploading by Url
           }
         }

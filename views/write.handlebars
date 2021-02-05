@@ -10,11 +10,12 @@ action='<div onclick="publish()" class="pub mx-4 text-white p-2 bg-cyan-600 roun
 <div class="w-full flex justify-center mt-12">
   <div class="w-full md:w-8/12 lg:w-6/12 lg:px-0 md:px-0 px-8">
     <div id="editorjs"></div>
-    <div id="tagswrapper" class="flex items-center flex-wrap pt-6 pb-24">
+    <div id="tagswrapper" class="flex items-center flex-wrap pt-6 pb-24 w-full">
       {{#each tags}}
         <div class="rounded-sm bg-gray-100 text-sm text-gray-500 p-2 m-1 cursor-pointer">{{capitolize tag }}</div>
       {{/each}}
-      <input id="addTag" class="mx-4 apperance-none focus:outline-none" placeholder="Add tag..." />
+      <input id="addTag" class="mx-4 apperance-none focus:outline-none flex-grow" placeholder="Add tag..." />
+      <div onclick="deletePost()" class="pub mx-4 text-white p-2 bg-red-600 rounded-sm cursor-pointer">Delete</div>
     </div>
   </div>
 </div>

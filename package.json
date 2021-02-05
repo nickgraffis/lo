@@ -21,6 +21,7 @@
     "@editorjs/editorjs": "^2.19.1",
     "@editorjs/header": "^2.6.1",
     "@editorjs/list": "^1.6.2",
+    "aws-sdk": "^2.839.0",
     "bcrypt": "^5.0.0",
     "connect-session-sequelize": "^7.0.4",
     "dotenv": "^8.2.0",

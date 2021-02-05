@@ -44,6 +44,13 @@ if (document.querySelector('#login-icon')) {
   })
 }
 
+window.updateUserAvatar = (avatar, id) => {
+  lo.update('user', {id, avatar})
+  .then((response) => {
+    let res = JSON.parse(response)
+    document.querySelector('#userAvatar').src = res.avatar
+  })
+}
 
 window.updateProfile = async (id, field, value, callback) => {
   let userData = await lo.update('user', {id, [field]: value})

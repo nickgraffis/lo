@@ -21,13 +21,13 @@ router.post('/', async (req, res) => {
 
     const remarkData = await Remark.create(req.body, {
       include: [
-        { model: User, attributes: { exclude: ['password'] } },
-        { model: Post}
-      ],
-      attributes: ['id', 'remark']
+        { model: User}
+      ]
     });
-
-    res.json(remarkData);
+    let remark = remarkData.get({plain: true})
+    let user = await remarkData.getUser()
+    remark.user = user.get({plain: true})
+    res.json(remark);
   } catch (err) {
     console.log(err)
     res.status(400).json(err);

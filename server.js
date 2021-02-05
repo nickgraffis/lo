@@ -1,5 +1,6 @@
 const moment = require('moment');
 const crypto = require('crypto');
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -11,6 +12,9 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const app = express();
 const PORT = process.env.PORT || 3030;
 const hbs = exphbs.create({ helpers });
+const aws = require('aws-sdk');
+aws.config.region = 'us-west-1';
+const S3_BUCKET = process.env.S3_BUCKET;
 const multer = require('multer');
 const storage = multer.diskStorage({
   destination: './public/img',
@@ -47,17 +51,95 @@ sequelize.sync({ force: false }).then(() => {
   });
 });
 
-app.post('/imageupload/', upload.single('image'), async (req, res) => {
+// app.post('/imageupload/', upload.single('image'), async (req, res) => {
+//   try {
+//     console.log(req.file);
+//     let url = __dirname + '/img/' + req.params.file
+//     let response = {
+//         "success" : 1,
+//         "file": {
+//             "url" : 'https://neptuneblog.herokuapp.com/img/' + req.file.filename,
+//         }
+//     }
+//     res.json(response);
+//   } catch (err) {
+//     console.log(err)
+//     res.status(400).json(err);
+//   }
+// });
+
+app.post('/imageupload', upload.single('image'), async (req, res) => {
   try {
-    console.log(req.file);
-    let url = __dirname + '/img/' + req.params.file
-    let response = {
-        "success" : 1,
-        "file": {
-            "url" : 'https://neptuneblog.herokuapp.com/img/' + req.file.filename,
-        }
-    }
-    res.json(response);
+    const s3 = new aws.S3();
+    const fileName = req.file.filename;
+    const fileType = req.file.mimetype;
+    const fileContent = fs.readFileSync(req.file.path);
+    const s3Params = {
+      Bucket: S3_BUCKET,
+      Body: fileContent,
+      Key: fileName,
+      Expires: 60,
+      ContentType: fileType,
+      ACL: 'public-read'
+    };
+
+    s3.upload(s3Params, (err, data) => {
+      if(err){
+        console.log(err);
+        return res.end();
+      }
+      const returnData = {
+        signedRequest: data,
+        url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+      };
+      let response = {
+          "success" : 1,
+          "file": {
+              "url" : returnData.url,
+          }
+      }
+      res.json(response);
+      res.end();
+    });
+  } catch (err) {
+    console.log(err)
+    res.status(400).json(err);
+  }
+});
+
+app.post('/upload/avatar', upload.single('image'), async (req, res) => {
+  try {
+    const s3 = new aws.S3();
+    const fileName = req.file.filename;
+    const fileType = req.file.mimetype;
+    const fileContent = fs.readFileSync(req.file.path);
+    const s3Params = {
+      Bucket: S3_BUCKET,
+      Body: fileContent,
+      Key: fileName,
+      Expires: 60,
+      ContentType: fileType,
+      ACL: 'public-read'
+    };
+
+    s3.upload(s3Params, (err, data) => {
+      if(err){
+        console.log(err);
+        return res.end();
+      }
+      const returnData = {
+        signedRequest: data,
+        url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+      };
+      let response = {
+          "success" : 1,
+          "file": {
+              "url" : returnData.url,
+          }
+      }
+      res.json(response);
+      res.end();
+    });
   } catch (err) {
     console.log(err)
     res.status(400).json(err);

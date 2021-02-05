@@ -65,13 +65,21 @@ router.get('/post/:id', async (req, res) => {
   try {
     const postData = await Post.findOne({ where: { id: req.params.id } });
     const userData = await postData.getUser();
-    const remarkData = await postData.getRemarks();
+    const remarkData = await postData.getRemarks({ include: [{model: User}],       order: [
+            // Will escape title and validate DESC against a list of valid direction parameters
+            ['updated_at', 'DESC']
+          ]});
     const post = postData.get({ plain: true });
+    if (!post.status) {
+      res.redirect('/')
+      return
+    }
     const user = userData.get({ plain: true });
     const tagsData = await postData.getTags();
     const tags = tagsData.map((tag) => tag.get({ plain: true }));
     const remarks = remarkData.map((remark) => remark.get({ plain: true }));
     let editorPost = JSON.stringify(post)
+    console.log(remarks)
     res.render('post', {
       post,
       editorPost,
