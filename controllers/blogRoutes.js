@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 
       order: [
          // Will escape title and validate DESC against a list of valid direction parameters
-         ['created_at', 'DESC'],
+         ['updated_at', 'DESC'],
        ]
     });
 

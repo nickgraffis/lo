@@ -39,15 +39,11 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
+    console.log(req.body)
     let userData = await User.findOne({ where: { id: req.params.id } })
+    userData = await userData.update(req.body);
     console.log(userData)
-    userData = await userData.update({
-      name: req.body.name || userData.dataValues.name,
-      email: req.body.email || userData.dataValues.email,
-      password: req.body.password || userData.dataValues.password,
-      avatar: req.body.avatar || userData.dataValues.avatar
-    });
-    console.log(userData)
+    console.log('done')
     res.json(userData);
   } catch (err) {
     console.log(err)
