@@ -12,9 +12,11 @@
       </div>
     {{/each}}
     </div>
+    {{#if logged_in}}
     <div id="inputWrapper" class="flex sticky bottom-0 w-full px-2 py-6 bg-white z-50 items-center">
       <input id="remarkInput" class="appearance-none focus:outline-none flex-grow px-2" placeholder="Add a comment..." />
       <div id="remarkSubmit" onclick="addRemark()" class="cursor-pointer p-2 bg-cyan-500 text-white rounded-sm">Submit</div>
     </div>
+    {{/if}}
   </div>
 </div>

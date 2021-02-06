@@ -71,7 +71,7 @@
   postBody.blocks.shift()
   const postData = {post: JSON.stringify(postBody)}
   const postReadOnly = true
-  const user_id = {{user.id}}
+  {{#if user.id }}const user_id = {{user.id}} {{/if}}
   const post_id = {{post.id}}
 
   let showingRemarks = false
