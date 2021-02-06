@@ -5,6 +5,7 @@ const withAuth = require('../utils/auth');
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
+      limit: 50,
       where: { status: 1 },
       include: [
         {
@@ -22,9 +23,22 @@ router.get('/', async (req, res) => {
        ]
     });
 
-    const tagData = await Tag.findAll({ });
+    let tags = []
+    let tagValues = []
+    postData.forEach((post) => {
+      post.tags.forEach((tag) => {
+        let $tag = tag.get({plain: true})
+        if (tagValues.includes($tag.tag)) {
 
-    const tags = tagData.map((tag) => tag.get({ plain: true }))
+        } else {
+          tags.push($tag)
+          tagValues.push($tag.tag)
+        }
+      })
+    })
+
+
+    console.log(tags)
 
     let posts = postData.map((post) => post.get({ plain: true }));
 
@@ -107,7 +121,66 @@ router.get('/profile', withAuth, async (req, res) => {
 
     res.render('profile', {
       user,
-      logged_in: true
+      logged_in: req.session.logged_in
+    });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err);
+  }
+});
+
+router.get('/profile/:user_uri', async (req, res) => {
+  try {
+    const user_id = req.params.user_uri.split('-')[1]
+    const userData = await User.findOne({
+      where: { id: user_id }
+    }, {
+      attributes: { exclude: ['password'] },
+      include: [{ model: Post }, { model: Remark }],
+    });
+
+    const user = userData.get({ plain: true });
+
+    const posts = await userData.getPosts({
+      include: [{model: User}, {
+        model: Tag
+      }],
+      order: [
+        // Will escape title and validate DESC against a list of valid direction parameters
+        ['updated_at', 'DESC']
+      ]
+    })
+
+    let published = []
+    let drafts = []
+    posts.forEach((post) => {
+      if (post.dataValues.status) {
+        published.push(post)
+      } else {
+        drafts.push(post)
+      }
+    })
+
+    published = published.map((pub) => pub.get({plain: true}))
+
+    published.forEach((pub) => {
+      try {
+        let $published = JSON.parse(pub.post)
+        if ($published.blocks) {
+          $published.blocks.map((block) => {
+            if (block.type === 'image') {
+              pub.img = block.data
+            }
+          })
+        }
+      } catch (err) {
+      }
+    })
+
+    res.render('public-profile', {
+      user,
+      published,
+      logged_in: req.session.logged_in
     });
   } catch (err) {
     console.log(err)
@@ -146,7 +219,7 @@ router.get('/stories', withAuth, async (req, res) => {
       user,
       drafts,
       published,
-      logged_in: true
+      logged_in: req.session.logged_in
     });
   } catch (err) {
     console.log(err)
@@ -177,7 +250,7 @@ router.get('/write/:id', withAuth, async (req, res) => {
       editorPost,
       post,
       tags,
-      logged_in: true
+      logged_in: req.session.logged_in
     });
   } catch (err) {
     console.log(err)
@@ -198,7 +271,7 @@ router.get('/writer/:id', withAuth, async (req, res) => {
 
     res.render('profile', {
       user,
-      logged_in: true
+      logged_in: req.session.logged_in
     });
   } catch (err) {
     console.log(err)

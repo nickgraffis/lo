@@ -37,6 +37,8 @@ router.post('/', async (req, res) => {
       postData.addTag(tags[i])
     }
 
+    await postData.update({claps: 0})
+
     res.json(postData);
   } catch (err) {
     console.log(err)
@@ -47,22 +49,26 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const postData = await Post.findOne({
-      where: { id: req.params.id }
-    }, {
+      where: { id: req.params.id },
       include: [
-        { model: User, attributes: { exclude: ['password'] } },
-        { model: Remark },
-        { model: Tag }
-      ],
-      attributes: ['id', 'title', 'tagline', 'status', 'post'],
-    });
+      {
+        model: User,
+        attributes: ['name', 'id', 'email', 'avatar']
+      },
+      {
+        model: Tag
+      }
+    ],
+        });
 
     if (!postData) {
       res.status(400).json({ message: 'Could not find that post!' });
       return;
     }
 
-    res.json(postData);
+    let post = postData.get({plain: true})
+
+    res.json(post);
   } catch (err) {
     console.log(err)
     res.status(400).json(err);

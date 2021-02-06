@@ -70,7 +70,7 @@ class Modal {
       setTimeout(() => {
         form.innerHTML = `
           <label for="email" class="text-center">Your Email</label>
-          <input value="${this.email}" id="email" type="email" name="email" class="mt-10 w-full apperance-none focus:outline-none border-b border-gray-800 text-center">
+          <input value="${this.email}" id="email" type="email" name="email" class="mt-10 w-full focus:outline-none border p-4 rounded-sm border-gray-800 text-center">
         `
         form.style.transform = ''
         document.getElementById(this.stage).focus()
@@ -81,7 +81,7 @@ class Modal {
       setTimeout(() => {
         form.innerHTML = `
           <label for="password" class="text-center">Your Password</label>
-          <input id="password" type="password" name="password" class="mt-10 w-full apperance-none focus:outline-none border-b border-gray-800 text-center">
+          <input id="password" type="password" name="password" class="mt-10 w-full focus:outline-none border p-4 rounded-sm border-gray-800 text-center">
         `
         form.style.transform = ''
         document.getElementById(this.stage).focus()
@@ -92,7 +92,7 @@ class Modal {
       setTimeout(() => {
         form.innerHTML = `
           <label for="name" class="text-center">Your Name</label>
-          <input id="name" type="text" name="namme" class="mt-10 w-full apperance-none focus:outline-none border-b border-gray-800 text-center">
+          <input id="name" type="text" name="name" class="mt-10 w-full focus:outline-none border p-4 rounded-sm border-gray-800 text-center">
         `
         form.style.transform = ''
         document.getElementById(this.stage).focus()

@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      avatar: './img/avatars/default.png'
+      avatar: 'https://neptuneblog-amazon-sdk-us-west.s3-us-west-1.amazonaws.com/moonbank-mascot2.png'
     });
 
     req.session.save(() => {

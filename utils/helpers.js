@@ -71,5 +71,8 @@ module.exports = {
   pickHeroImage: () => {
     let options = ['selfie', 'ideas', 'macine', 'robolove']
     return options[Math.floor(Math.random() * Math.floor(3))]
+  },
+  userURI: (user) => {
+    return user.replace(/\s/g, '').toLowerCase()
   }
 };

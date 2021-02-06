@@ -182,10 +182,16 @@ window.deletePost = () => {
   .then(window.location.href = '/stories')
 }
 
-window.addEventListener("keydown", (event) => {
+window.addEventListener("keydown", async (event) => {
   if (event.key == 'Enter'
   && document.activeElement === document.querySelector('#addTag')
   && document.querySelector('#addTag').value) {
+    let tagsData = await lo.read('post', {id: post_id})
+    let tags = JSON.parse(tagsData)
+    if (tags.tags.length > 5) {
+      console.log('too many tags')
+      return
+    }
     lo.create('tag', {tag: document.querySelector('#addTag').value, post_id, user_id})
     .then((response) => {
       let res = JSON.parse(response)
@@ -407,6 +413,9 @@ module.exports = {
   pickHeroImage: () => {
     let options = ['selfie', 'ideas', 'macine', 'robolove']
     return options[Math.floor(Math.random() * Math.floor(3))]
+  },
+  userURI: (user) => {
+    return user.replace(/\s/g, '').toLowerCase()
   }
 };
 
