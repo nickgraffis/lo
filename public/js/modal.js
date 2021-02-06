@@ -169,7 +169,7 @@ class Modal {
         this.password = document.querySelector('#password').value
         let login = await lo.login(this.email, this.password)
         console.log(login)
-        if (login == '400') {
+        if (login == '{"message":"Incorrect email or password, please try again"}') {
           this.stage = 'email'
           this.continueForm()
           this.showError('Incorrect email or password!')

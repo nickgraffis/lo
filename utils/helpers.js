@@ -31,7 +31,7 @@ module.exports = {
     const date = new Date(Date.now())
     if (date.getHours() < 12 && date.getHours() > 3) {
       return 'Good morning'
-    } else if (date.getHours() > 3 && date.getHours() < 16) {
+    } else if (date.getHours() > 12 && date.getHours() < 16) {
       return 'Good afternoon'
     } else if (date.getHours() > 15 && date.getHours() < 24) {
       return 'Good evening'

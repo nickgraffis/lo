@@ -582,7 +582,7 @@ function lojax(method, route, params) {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
         resolve(xhttp.responseText);
       } else if (xhttp.readyState == 4 && xhttp.status != 200) {
-        reject(xhttp.status);
+        resolve(xhttp.responseText);
       }
     };
     xhttp.open(method, route, true);
@@ -1033,7 +1033,7 @@ class Modal {
         this.password = document.querySelector('#password').value
         let login = await lo.login(this.email, this.password)
         console.log(login)
-        if (login == '400') {
+        if (login == '{"message":"Incorrect email or password, please try again"}') {
           this.stage = 'email'
           this.continueForm()
           this.showError('Incorrect email or password!')

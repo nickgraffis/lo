@@ -74,8 +74,14 @@ router.get('/', async (req, res) => {
 
 router.get('/post/:id', async (req, res) => {
   try {
+    let userData
+    let user
+    if (req.session.user_id) {
+      userData = await User.findOne({ where: { id:  req.session.user_id} })
+      user = userData.get({ plain: true })
+    }
     const postData = await Post.findOne({ where: { id: req.params.id } });
-    const userData = await postData.getUser();
+    const postuserData = await postData.getUser();
     const remarkData = await postData.getRemarks({ include: [{model: User}],       order: [
             // Will escape title and validate DESC against a list of valid direction parameters
             ['updated_at', 'DESC']
@@ -85,7 +91,7 @@ router.get('/post/:id', async (req, res) => {
       res.redirect('/')
       return
     }
-    const user = userData.get({ plain: true });
+    const postUser = postuserData.get({ plain: true });
     const tagsData = await postData.getTags();
     const tags = tagsData.map((tag) => tag.get({ plain: true }));
     const remarks = remarkData.map((remark) => remark.get({ plain: true }));
@@ -95,6 +101,7 @@ router.get('/post/:id', async (req, res) => {
       post,
       editorPost,
       user,
+      postUser,
       tags,
       remarks,
       logged_in: req.session.logged_in
@@ -128,17 +135,23 @@ router.get('/profile', withAuth, async (req, res) => {
 
 router.get('/profile/:user_uri', async (req, res) => {
   try {
+    let userData
+    let user
+    if (req.session.user_id) {
+      userData = await User.findOne({ where: { id:  req.session.user_id} })
+      user = userData.get({ plain: true })
+    }
     const user_id = req.params.user_uri.split('-')[1]
-    const userData = await User.findOne({
+    const postuserData = await User.findOne({
       where: { id: user_id }
     }, {
       attributes: { exclude: ['password'] },
       include: [{ model: Post }, { model: Remark }],
     });
 
-    const user = userData.get({ plain: true });
+    const postUser = postuserData.get({ plain: true });
 
-    const posts = await userData.getPosts({
+    const posts = await postuserData.getPosts({
       include: [{model: User}, {
         model: Tag
       }],
@@ -176,6 +189,7 @@ router.get('/profile/:user_uri', async (req, res) => {
 
     res.render('public-profile', {
       user,
+      postUser,
       published,
       logged_in: req.session.logged_in
     });

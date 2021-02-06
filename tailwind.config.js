@@ -29,7 +29,20 @@ module.exports = {
       './public/js/editor.js',
       './public/js/index.js',
       './public/js/modal.js',
-    ]
+    ],
+    options: {
+      safelist: [
+        'bg-green-500',
+        'bg-red-500',
+        'z-50',
+        '-translate-y-36',
+        'translate-y-36',
+        'duration-500',
+        '-top-24',
+        'bg-indigo-600',
+        'bg-pink-600'
+      ],
+    }
   },
   darkMode: 'class', // or 'media' or 'class'
   theme: {

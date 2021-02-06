@@ -3,8 +3,8 @@ data-disqualifier='[]'
 data-tags='[{{#foreach tags}} "{{tag}}" {{#if $last}}{{else}},{{/if}} {{/foreach}}]'>
   <div class="text {{#if img}}w-4/6 {{else}} w-full {{/if}} pr-4">
     <div class="author flex w-full items-center">
-      <img src="{{ user.avatar }}" class="mr-2 h-8 w-8 rounded-full object-cover" />
-      <p class="text-gray-500 text-sm font-semibold mx-2">{{ user.name }}</p>
+      <a href="/profile/{{userURI user.name}}-{{user.id}}"><img src="{{ user.avatar }}" class="mr-2 h-8 w-8 rounded-full object-cover" /></a>
+      <a href="/profile/{{userURI user.name}}-{{user.id}}"><p class="text-gray-500 text-sm font-semibold mx-2">{{ user.name }}</p></a>
     </div>
     <a href="/post/{{ id }}">
       <p class="title text-gray-700 text-xl font-semibold my-2">{{ title }}</p>

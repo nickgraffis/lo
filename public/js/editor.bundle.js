@@ -93,6 +93,7 @@ function lojax(method, route, params) {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
         resolve(xhttp.responseText);
       } else if (xhttp.readyState == 4 && xhttp.status != 200) {
+        console.log(xhttp.statusText)
         reject(xhttp.status);
       }
     };
