@@ -705,9 +705,186 @@ module.exports = {
 }
 
 },{"./api/lojax.js":2}],4:[function(require,module,exports){
+var stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"];
+
+function dot(vector1, vector2) {
+  var result = 0;
+  for (var i = 0; i < vector1.length; i++) {
+    result += vector1[i] * vector2[i];
+  }
+  return result;
+}
+
+function sentenceTokinization (text) {
+  return text.replace(/([.?!])\s*(?=[A-Z])/g, "$1|").split("|");
+};
+
+function tokenizeWords(text) {
+  var processedText = text.replace(/[^a-zA-Z ]/g, "");
+  processedText = processedText.replace(/\d+/g, '');
+  var words = processedText.split(/\W+/).filter(function(token) {
+      token = token.toLowerCase();
+      return token.length >= 2 && stopwords.indexOf(token) == -1;
+  });
+  return words;
+}
+var nGramNumber = 2
+
+function generate_ngrams (words, n) {
+  var nGramsList = [];
+  for (let i = 0; i < words.length; i++) {
+    var nGramWord = words.slice(i, i + nGramNumber).join(' ');
+    if (nGramWord.split(' ').length >= 2) {
+      nGramsList.push(nGramWord);
+    }
+  }
+  return nGramsList;
+}
+
+function frequencyOfWords(words) {
+  var freq = {};
+  var uniqueWords = [];
+  for (let i = 0; i < words.length; i++) {
+    if (!uniqueWords.includes(words[i])) {
+      uniqueWords.push(words[i]);
+    }
+  }
+  for (let i = 0; i < words.length; i++) {
+    var result = words.filter(word => word === words[i]);
+    freq[words[i]] = result.length;
+  }
+  return freq;
+}
+
+function tfScore (word, sentence) {
+  var wordFreqInSentence = 1;
+  var sentenceInNGrams = generate_ngrams(sentence.split(' '), nGramNumber);
+  for (let i = 0; i < sentenceInNGrams.length; i++) {
+    if (word === sentenceInNGrams[i]) {
+      wordFreqInSentence++;
+    }
+  }
+  var tf = wordFreqInSentence / sentenceInNGrams.length;
+  return tf;
+}
+
+function idfScore (word, sentences) {
+  var noOfSentencesContainingWord = 1;
+  for (let i = 0; i < sentences.length; i++) {
+    let eachSentenceInNGrams = generate_ngrams(sentences[i].split(' '), nGramNumber);
+    for (let k = 0; k < eachSentenceInNGrams.length; k++) {
+      if (word === eachSentenceInNGrams[k]) {
+        noOfSentencesContainingWord++;
+      }
+    }
+  }
+  var idf = Math.log10(sentences.length / noOfSentencesContainingWord);
+  return idf;
+}
+
+function createMatrix (text) {
+  //Tokenize Sentences
+  var sentences = sentenceTokinization(text);
+  var numberOfWords = [];
+  for (let i = 0; i < sentences.length; i++) {
+    let words = generate_ngrams(tokenizeWords(sentences[i]), nGramNumber);
+    numberOfWords.push(words.length);
+  }
+  var numberOfColumns = Math.max(...numberOfWords);
+  var matrix = [];
+  for (let i = 0; i < sentences.length; i++) {
+    let words = generate_ngrams(tokenizeWords(sentences[i]), nGramNumber);
+    let thisSentence = [];
+    for (let k = 0; k < numberOfColumns; k++) {
+      if (words[k]) {
+        let tf = tfScore(words[k], sentences[i]);
+        let idf = idfScore(words[k], sentences);
+        let tfidfValue = tf * idf;
+        thisSentence.push(tfidfValue);
+      } else {
+        thisSentence.push(0);
+      }
+    }
+    matrix.push(thisSentence);
+  }
+  return matrix;
+}
+
+function zeros (columns, rows) {
+  var matrix = [];
+  var rowMatrix = [];
+  for (let i = 0; i < columns; i++) {
+    rowMatrix = [];
+    for (let k = 0; k < rows; k++) {
+      rowMatrix.push(0);
+    }
+    matrix.push(rowMatrix);
+  }
+  return matrix;
+}
+
+function cosineSimilarity (matrix) {
+  var resultMatrix = zeros(matrix.length, matrix[0].length);
+  var rowCount = 0;
+  var columnCount = 0;
+  for (let i = 0; i < matrix.length; i++) {
+    var A = matrix[i];
+    columnCount = 0;
+    for (let k = 0; k < matrix.length; k++) {
+      var B = matrix[k];
+      abDotProduct = dot(A, B);
+      denominator = Math.sqrt(dot(A, A)) * Math.sqrt(dot(B, B));
+      cosTheta = abDotProduct / denominator;
+      resultMatrix[rowCount][columnCount] = cosTheta;
+      columnCount++;
+    }
+    rowCount++;
+  }
+  var sentenceImportance = {};
+  var count = 0;
+  for (let i = 0; i < resultMatrix.length; i++) {
+    sentenceImportance[count] = resultMatrix[i].reduce((a, b) => a + b, 0) / resultMatrix[i].length;
+    count++;
+  }
+  return sentenceImportance;
+}
+
+function sortObjectEntries(obj, n){
+  let sortedList = []
+  //Sorting by values asc
+  sortedList = Object.entries(obj).sort((a,b)=>{
+      if(b[1] > a[1]) return 1;
+      else if(b[1] < a[1]) return -1;
+  //if values are same do edition checking if keys are in the right order
+      else {
+         if(a[0] > b[0]) return 1;
+         else if(a[0] < b[0]) return -1;
+         else return 0
+  }
+  })
+  // return first n values from sortedList
+  return sortedList.map(el=>el[0]).slice(0,n)
+}
+
+function dumas (text, k) {
+  var matrix = createMatrix(text);
+  var cosSim = cosineSimilarity(matrix);
+  var importantSentencesArray = sortObjectEntries(cosSim, k);
+  var sentences = sentenceTokinization(text);
+  var importantSentences = [];
+  for (let i = 0; i < k; i++) {
+    importantSentences.push(sentences[importantSentencesArray[i]]);
+  }
+  return importantSentences.join(' ');
+}
+
+module.exports = { dumas: dumas }
+
+},{}],5:[function(require,module,exports){
 const lo = require('./api/lojax.js')
 const joinlo = require('./modal.js').start()
 const clap = require('./clap.js')
+const __ = require('./dumas.js')
 let userOptionsShowing = false
 let optionsShowing = false
 
@@ -718,6 +895,44 @@ document.querySelector('#register').addEventListener("click", (event) => {
 document.querySelector('#continue-sign-in').addEventListener("click", async (event) => {
   joinlo.continue()
 })
+
+window.closeSummary = ()=> {
+  document.querySelector('#summary-modal').remove()
+}
+
+window.summerize = async (id) => {
+  let postData = await lo.read('post', { id })
+  let post = JSON.parse(postData)
+  let postObj = JSON.parse(post.post)
+  let blocks = postObj.blocks
+  let text = []
+  blocks.forEach((block) => {
+    let keys = Object.keys(block.data)
+    if (keys.includes("text")) {
+      text.push(block.data.text)
+    }
+  })
+  let summary = __.dumas(text.join(''), 5)
+  console.log(summary)
+  let modal = document.createElement('DIV')
+  modal.classList = 'opacity-100 transition-opacity bg-white w-full flex items-center justify-center bg-opacity-90 fixed inset-0 overflow-y-auto z-10'
+  modal.id = "summary-modal"
+  modal.innerHTML = `
+  <div id="summary-modal-body" class="overflow-hidden transform duration-150 w-4/6 md:w-4/6 lg:w-3/6 flex flex-col items-center justify-center bg-white rounded-sm text-left shadow-xl transform transition-all">
+    <div class="self-end">
+      <svg onclick="closeSummary()" class="h-8 w-8 text-gray-300 hover:text-gray-400 m-4 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+    <div class="center p-12 flex flex-col items-center justify-center">
+      <p id="modal-title" style="font-family: 'Work Sans', sans-serif; color: white; mix-blend-mode: difference;" class="transform duration-300 z-40 text-center text-gray-700 text-3xl">
+        ${summary}
+      </p>
+    </div>
+  </div>
+      `
+  document.body.append(modal)
+}
 
 document.onkeydown = checkKey;
 
@@ -861,7 +1076,7 @@ if (document.querySelector('#menu-icon')) {
   })
 }
 
-},{"./api/lojax.js":2,"./clap.js":3,"./modal.js":5}],5:[function(require,module,exports){
+},{"./api/lojax.js":2,"./clap.js":3,"./dumas.js":4,"./modal.js":6}],6:[function(require,module,exports){
 const lo = require('./api/lojax.js')
 const { toast } = require('./tailwind-toast/twtoast.js')
 
@@ -1055,7 +1270,7 @@ module.exports = {
   }
 }
 
-},{"./api/lojax.js":2,"./tailwind-toast/twtoast.js":9}],6:[function(require,module,exports){
+},{"./api/lojax.js":2,"./tailwind-toast/twtoast.js":10}],7:[function(require,module,exports){
 const h = require('../utils/helpers')
 const options = require('../utils/options.json')
 const numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'zero', 'ten', 'eleven']
@@ -1178,7 +1393,7 @@ class Snackbar {
 
 module.exports = Snackbar
 
-},{"../utils/helpers":10,"../utils/options.json":11}],7:[function(require,module,exports){
+},{"../utils/helpers":11,"../utils/options.json":12}],8:[function(require,module,exports){
 const h = require('../utils/helpers')
 const options = require('../utils/options.json')
 const numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'zero', 'ten', 'eleven']
@@ -1295,7 +1510,7 @@ class Toast {
 
 module.exports = Toast
 
-},{"../utils/helpers":10,"../utils/options.json":11,"twemoji":1}],8:[function(require,module,exports){
+},{"../utils/helpers":11,"../utils/options.json":12,"twemoji":1}],9:[function(require,module,exports){
 {
   //default values
   modules: [
@@ -1303,7 +1518,7 @@ module.exports = Toast
   ]
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 const config = require('./twtoast.config.js')
 const Toast = require('./classes/Toast')
 const Snackbar = require('./classes/Snackbar')
@@ -1347,7 +1562,7 @@ module.exports = {
   }
 }
 
-},{"./classes/Snackbar":6,"./classes/Toast":7,"./twtoast.config.js":8}],10:[function(require,module,exports){
+},{"./classes/Snackbar":7,"./classes/Toast":8,"./twtoast.config.js":9}],11:[function(require,module,exports){
 function getFile(file) {
   var x = new XMLHttpRequest();
   x.open('GET', file, false);
@@ -1359,7 +1574,7 @@ module.exports = {
   getFile: getFile
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports=[
   "color",
   "title",
@@ -1374,4 +1589,4 @@ module.exports=[
   "speed"
 ]
 
-},{}]},{},[4]);
+},{}]},{},[5]);
