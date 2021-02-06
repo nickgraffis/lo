@@ -58,9 +58,11 @@ router.put('/:id', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
+    console.log('login start')
     const userData = await User.findOne({ where: { email: req.body.email } });
 
     if (!userData) {
+      console.log('cant find user')
       res
         .status(400)
         .json({ message: 'We couldn\'t find an account with that email' });
@@ -70,6 +72,7 @@ router.post('/login', async (req, res) => {
     const validPassword = await userData.checkPassword(req.body.password);
 
     if (!validPassword) {
+      console.log('cant validate password')
       res
         .status(400)
         .json({ message: 'Incorrect email or password, please try again' });
@@ -83,6 +86,7 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (err) {
+    console.log('login error')
     console.log(err)
     res.status(400).json(err);
   }

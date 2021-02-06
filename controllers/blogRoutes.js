@@ -37,9 +37,6 @@ router.get('/', async (req, res) => {
       })
     })
 
-
-    console.log(tags)
-
     let posts = postData.map((post) => post.get({ plain: true }));
 
     posts.forEach((post) => {
